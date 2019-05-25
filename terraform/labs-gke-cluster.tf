@@ -1,6 +1,17 @@
+terraform {
+  backend "remote" {
+    organization = "sobota"
+
+    workspaces {
+      name = "dev"
+    }
+  }
+}
+
 resource "google_container_cluster" "primary" {
   name     = "labs-sobota-io"
   location = "us-central1"
+  project  = "alien-gadget-219904"
 
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -18,14 +29,15 @@ resource "google_container_cluster" "primary" {
 resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "worker-web"
   location   = "us-central1"
+  project    = "alien-gadget-219904"
   cluster    = "${google_container_cluster.primary.name}"
-  node_count = 3
+  node_count = 2
 
   node_config {
     preemptible  = true
     machine_type = "n1-standard-1"
 
-    metadata {
+    metadata = {
       disable-legacy-endpoints = "true"
     }
 
