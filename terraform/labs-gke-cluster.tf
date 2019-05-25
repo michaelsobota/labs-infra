@@ -31,7 +31,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   location   = "us-central1"
   project    = "alien-gadget-219904"
   cluster    = "${google_container_cluster.primary.name}"
-  node_count = 2
+  node_count = 1
 
   node_config {
     preemptible  = true
