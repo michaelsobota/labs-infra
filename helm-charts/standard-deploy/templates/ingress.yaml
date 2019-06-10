@@ -1,0 +1,42 @@
+{{- $fullName := include "standard-deploy.fullname" . -}}
+{{- $servicePort := .Values.service.port -}}
+{{- $ingressPath := .Values.applicationPath -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "standard-deploy.fullServiceName" . }}
+  labels:
+    app: {{ include "standard-deploy.fullServiceName" . }}
+    release: {{ .Release.Name }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+  - hosts:
+    {{- if .Values.tldRoot }}
+    - "{{ .Values.domain }}"
+    {{- else if .Values.subDomainRoot }}
+    - "{{ .Values.subDomain }}.{{ .Values.domain }}"
+    {{- else }}
+    - "{{ .Values.releaseName }}.{{ .Values.subDomain }}.{{ .Values.domain }}"
+    {{- end }}
+    secretName: {{ .Values.ingress.secretName }}
+  {{- end }}
+  rules:
+    {{- if .Values.tldRoot }}
+    - host: {{ .Values.domain }}
+    {{- else if .Values.subDomainRoot }}
+    - host: {{ .Values.subDomain }}.{{ .Values.domain }}
+    {{- else }}
+    - host: {{ .Values.releaseName }}.{{ .Values.subDomain }}.{{ .Values.domain }}
+    {{- end }}
+      http:
+        paths:
+          - path: {{ $ingressPath }}
+            backend:
+              serviceName: {{ .Values.releaseName }}-{{ .Values.subDomain }}
+              servicePort: http
+

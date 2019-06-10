@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "standard-deploy.fullServiceName" . }}
+  labels:
+    app: {{ include "standard-deploy.fullServiceName" . }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.releaseName }}-{{ .Values.subDomain }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        release: {{ .Release.Name }}
+        app: {{ .Values.releaseName }}-{{ .Values.subDomain }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+        - name: artifactory
+      containers:
+        - name: {{ .Values.releaseName }}-{{ .Values.subDomain }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.containerPort }}
+              protocol: TCP
+          {{- if .Values.healthCheck.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.healthCheck.alive.path }}
+              port: {{ .Values.healthCheck.ready.port }}
+            initialDelaySeconds: {{ .Values.healthCheck.alive.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.alive.periodSeconds }}
+            failureThreshold: {{ .Values.healthCheck.alive.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.healthCheck.ready.path }}
+              port: {{ .Values.healthCheck.ready.port }}
+            initialDelaySeconds: {{ .Values.healthCheck.ready.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.ready.periodSeconds }}
+            failureThreshold: {{ .Values.healthCheck.ready.failureThreshold }}
+          {{- end }}
+          env:
+          {{- range $key, $value := .Values.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+{{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+{{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

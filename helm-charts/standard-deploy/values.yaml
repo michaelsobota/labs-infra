@@ -1,0 +1,86 @@
+# Default values for standard-deploy.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+##### Pull Stuff
+image:
+  repository: nginx
+  tag: latest
+  pullPolicy: IfNotPresent
+  pullSecret: panamax
+
+##### App Stuff
+replicaCount: 2
+containerPort: 80 # (named http)
+env:
+  fromSecret: {}
+      #KEY: value
+# Name is from the release name (--name )
+releaseName: develop
+subDomain: 'nginx' # team name!
+subDomainRoot: false # if set to true, will ignore release name in url
+domain: 'sobota.dev' #the tld
+tldRoot: false
+healthCheck:
+  enabled: true
+  alive:
+    port: http
+    path: /
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    failureThreshold: 3
+  ready:
+    port: http
+    path: /
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    failureThreshold: 3
+resources:
+  limits:
+    cpu: 100m
+    memory: 256Mi
+  requests:
+    cpu: 25m
+    memory: 128Mi
+
+metrics:
+  enabled: false
+  port: 9100
+  path: /metrics
+
+#### ADVANCED SETTINGS ONLY ########
+service:
+  type: ClusterIP
+  port: 80 #This shouldn't matter - getting assigned a cluster ip
+  #targetPort: containerPort
+applicationPath: "/"
+ingress:
+  tls: true
+  useWildcard: true
+  secretName: letsencrypt-prod
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/custom-http-errors: 403,404,415,502,503
+    nginx.ingress.kubernetes.io/http2-push-preload: "true"
+
+
+useCorsReflection:
+  enabled: false
+
+
+nodeSelector: {}
+deploymentType: Deployment
+tolerations: []
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: cloud.google.com/gke-nodepool
+          operator: Exists
+
+deploymentTime: 'manual'
+customDeploymentLabels: {}
