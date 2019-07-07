@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  standard-deploy:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2019-06-09T21:30:50.665279-06:00"
+    description: A Helm chart for Kubernetes
+    digest: 4bb17f06d6cf0e53b8949ee02f8b55dd6a49c1e04b8a66b40088d6c226fca6a2
+    name: standard-deploy
+    urls:
+    - https://sobota-charts.storage.googleapis.com/standard-deploy-0.1.0.tgz
+    version: 0.1.0
+generated: "2019-06-09T21:30:50.664195-06:00"

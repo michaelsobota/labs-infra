@@ -1,0 +1,18 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+ name: wildcard-thisisfine-sobota-dev
+ namespace: this-is-fine
+spec:
+ secretName: wildcard-thisisfine-sobota-dev-com-tls
+ issuerRef:
+   name: letsencryptdns
+   kind: ClusterIssuer
+ dnsNames:
+   - '*.thisisfine.sobota.dev'
+ acme:
+   config:
+     - dns01:
+         provider: dns
+       domains:
+         - '*.thisisfine.sobota.dev'
