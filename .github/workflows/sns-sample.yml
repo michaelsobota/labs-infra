@@ -15,6 +15,7 @@ jobs:
     needs: topic
     runs-on: ubuntu-latest
     steps:
-    - run: |
+    - name: print
+      run: |
         pwd
         ls -la
