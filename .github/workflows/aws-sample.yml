@@ -1,0 +1,13 @@
+name: AWS Sample
+
+on: push
+
+jobs:
+  list-buckets:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/aws/cli@master
+    - name: List S3 Buckets
+      run: s3 ls
