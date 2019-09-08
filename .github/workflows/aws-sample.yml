@@ -7,6 +7,6 @@ jobs:
     - name: List S3 Buckets
       uses: actions/aws/cli@master
       with:
+        args: s3 ls
         aws_access_key_id: ${{ secrets.aws_access_key_id }}
         aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
-      run: s3 ls
