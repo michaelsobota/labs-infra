@@ -9,5 +9,5 @@ jobs:
       with:
         args: s3 ls
       env:
-        aws_access_key_id: ${{ secrets.aws_access_key_id }}
-        aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
+        AWS_ACCESS_KEY_ID: $
+        AWS_SECRET_ACCESS_KEY: $
