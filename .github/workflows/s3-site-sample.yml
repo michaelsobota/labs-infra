@@ -33,7 +33,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: sync-dev
-      if: github.ref != 'master'
+      if: github.ref != 'refs/heads/master'
       uses: actions/aws/cli@master
       with:
         args: s3 sync k8s/ s3://sobota-actions-testing
