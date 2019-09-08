@@ -5,7 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: actions/aws/cli@master
+    - name: sync-dev
+      if: github.ref != master
+      uses: actions/aws/cli@master
       with:
         args: s3 sync k8s/ s3://sobota-actions-testing
       env:
