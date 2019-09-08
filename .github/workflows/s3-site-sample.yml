@@ -1,0 +1,12 @@
+name: Publish S3 Site
+on: push
+jobs:
+  publish-site:
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/aws/cli@master
+      with:
+        args: s3 sync k8s/ s3://sobota-actions-testing
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
