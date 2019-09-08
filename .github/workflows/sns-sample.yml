@@ -11,11 +11,13 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    - name: publish-to-topic
-      if: success()
-      uses: actions/aws/cli@master
-      with:
-        args: sns publish --topic-arn `jq .TopicArn ${HOME}/actionsaws.json --raw-output` --subject \"[$GITHUB_REPOSITORY] Code was pushed to $GITHUB_REF\" --message file://$GITHUB_EVENT_PATH"
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    - name: print-output
+      run: echo ${{ toJson(steps) }}
+    # - name: publish-to-topic
+    #   if: success()
+    #   uses: actions/aws/cli@master
+    #   with:
+    #     args: sns publish --topic-arn `jq .TopicArn ${HOME}/actionsaws.json --raw-output` --subject \"[$GITHUB_REPOSITORY] Code was pushed to $GITHUB_REF\" --message file://$GITHUB_EVENT_PATH"
+    #   env:
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
