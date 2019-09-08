@@ -1,5 +1,5 @@
 name: Publish to SNS Topic
-on: [push]
+on: push
 jobs:
   topic:
     runs-on: ubuntu-latest
@@ -11,11 +11,14 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  print-working:
+  publish:
     needs: topic
     runs-on: ubuntu-latest
     steps:
-    - name: printitout
-      run: |
-        pwd
-        ls -la
+    - name: publish-to-topic
+      uses: actions/aws/cli@master
+      with:
+        args: sns publish --topic-arn `jq .TopicArn $GITHUB_HOME/$GITHUB_ACTION.json --raw-output` --subject \"[$GITHUB_REPOSITORY] Code was pushed to $GITHUB_REF\" --message file://$GITHUB_EVENT_PATH"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
