@@ -1,10 +1,12 @@
-workflow: List S3 Buckets
-  on: push
-  resolves: list-buckets
-
-action: list-buckets
-  uses: actions/aws/cli@master
-  args: s3 ls
-  secrets:
-    - AWS_ACCESS_KEY_ID
-    - AWS_SECRET_ACCESS_KEY
+name: AWS Sample
+on: push
+jobs:
+  list-buckets:
+    runs-on: ubuntu-latest
+    steps:
+    - name: List S3 Buckets
+      uses: actions/aws/cli@master
+      with:
+        aws_access_key_id: ${{ secrets.aws_access_key_id }}
+        aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
+      run: s3 ls
